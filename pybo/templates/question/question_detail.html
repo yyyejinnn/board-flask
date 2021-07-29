@@ -97,8 +97,8 @@
   <h5 class="border-bottom my-3 py-2">
     {{question.answer_set|length}}개의 답변이 있습니다.
   </h5>
-  {%for answer in question.answer_set %}
 
+  {%for answer in question.answer_set %}
   <div class="row my-3">
     <!--추천-->
     <div class="col-1">
@@ -184,35 +184,38 @@
               ><small>댓글 추가 ..</small></a
             >
           </div>
+          <!--답변끝-->
         </div>
       </div>
-      {%endfor%}
-      <!--답변 등록-->
-      <form
-        action="{{ url_for('answer.create', question_id=question.id) }}"
-        method="post"
-        class="my-3"
-      >
-        {{form.csrf_token}}
-        <!--오류 표시-->
-        {%include 'form_errors.html' %}
-
-        <div class="form-group">
-          <textarea
-            {%if
-            not
-            g.user%}
-            disabled
-            {%endif%}
-            name="content"
-            id="content"
-            class="form-control"
-            rows="5"
-          ></textarea>
-        </div>
-        <input type="submit" value="답변등록" class="btn btn-primary" />
-      </form>
     </div>
   </div>
-  {%endblock%}
+
+  {%endfor%}
+
+  <!--답변 등록-->
+  <form
+    action="{{ url_for('answer.create', question_id=question.id) }}"
+    method="post"
+    class="my-3"
+  >
+    {{form.csrf_token}}
+    <!--오류 표시-->
+    {%include 'form_errors.html' %}
+
+    <div class="form-group">
+      <textarea
+        {%if
+        not
+        g.user%}
+        disabled
+        {%endif%}
+        name="content"
+        id="content"
+        class="form-control"
+        rows="5"
+      ></textarea>
+    </div>
+    <input type="submit" value="답변등록" class="btn btn-primary" />
+  </form>
 </div>
+{%endblock%}
