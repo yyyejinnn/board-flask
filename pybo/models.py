@@ -1,4 +1,22 @@
+from sqlalchemy.orm import backref
+from sqlalchemy.sql.schema import ForeignKey
 from app import db
+
+question_voter = db.Table(  # 테이블 객체
+    'question_voter',
+    db.Column('user_id', db.Integer, db.ForeignKey(
+        'user.id', ondelete='CASCADE'), primary_key=True),
+    db.Column('question_id', db.Integer, db.ForeignKey(
+        'question.id', ondelete='CASCADE'), primary_key=True)
+)
+
+answer_voter = db.Table(
+    'answer_voter',
+    db.Column('user_id', db.Integer, db.ForeignKey(
+        'user.id', ondelete='CASCADE'), primary_key=True),
+    db.Column('answer_id', db.Integer, db.ForeignKey(
+        'answer.id', ondelete='CASCADE'), primary_key=True)
+)
 
 
 class Question(db.Model):
@@ -10,6 +28,8 @@ class Question(db.Model):
         'user.id', ondelete='CASCADE'), nullable=False)  # 역참조
     user = db.relationship('User', backref=db.backref('question_set'))
     modify_date = db.Column(db.DateTime(), nullable=True)  # 수정 날짜
+    voter = db.relationship('User', secondary=question_voter,  # secondary : 다대다 관계
+                            backref=db.backref('question_voter_set'))
 
 
 class Answer(db.Model):
@@ -24,6 +44,8 @@ class Answer(db.Model):
         'user.id', ondelete='CASCADE'), nullable=False)
     user = db.relationship('User', backref=db.backref('answer_set'))  # 역참조
     modify_date = db.Column(db.DateTime(), nullable=True)
+    voter = db.relationship('User', secondary=answer_voter,
+                            backref=db.backref('answer_voter_set'))
 
 
 class User(db.Model):
